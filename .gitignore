@@ -1,0 +1,9 @@
+[Oo]bj/
+[Bb]in/
+.vs
+node_modules
+*.suo
+*.cache
+*.docstates
+packages/*
+msbuild.log
