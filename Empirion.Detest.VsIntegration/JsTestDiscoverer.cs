@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace Empirion.Detest
 {
@@ -9,6 +11,11 @@ namespace Empirion.Detest
     [FileExtension(".js")]
     public class JsTestDiscoverer : ITestDiscoverer
     {
+        public JsTestDiscoverer()
+        {
+            //Thread.Sleep(10000);
+        }
+
         public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
         {
             var tests = GetTests(sources);
@@ -23,12 +30,13 @@ namespace Empirion.Detest
         public static IEnumerable<TestCase> GetTests(IEnumerable<string> sources)
         {
             //TODO: make this configurable
-            var analyzer = "mocha_bdd_analyzer.js";
+            var analyzer = PathFinder.GetApplicationPath("mocha_bdd_analyzer.js");
 
+            var result2 = ProcessRunner.RunProcess("node", "-v");
             foreach(var source in sources)
             {
                 var result = ProcessRunner.RunAnalyzer(analyzer, source);
-                foreach(var line in result.Output)
+                foreach (var line in result.Output)
                 {
                     yield return new TestCase(line, JsTestExecutor.ExecutorUri, source);
                 }

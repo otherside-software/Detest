@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,8 +51,8 @@ namespace Empirion.Detest
                 NODE_PATH,
                 String.Format(
                     "\"{0}\" \"{1}\"",
-                    analyzer,
-                    fileToAnalyze
+                    PathFinder.GetApplicationPath(analyzer),
+                    PathFinder.GetApplicationPath(fileToAnalyze)
                 )
             );
         }

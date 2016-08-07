@@ -13,7 +13,9 @@ namespace Empirion.Detest.Tests
         [TestMethod]
         public void MochaBddTestDiscovery()
         {
-            var result = ProcessRunner.RunAnalyzer("mocha_bdd_analyzer.js", "TestAssets/mocha_bdd_math.js");
+            var analyzer = PathFinder.GetApplicationPath("mocha_bdd_analyzer.js");
+            var testfile = PathFinder.GetApplicationPath("TestAssets/mocha_bdd_math.js");
+            var result = ProcessRunner.RunAnalyzer(analyzer, testfile);
             Assert.AreEqual(3, result.Output.Count());
         }
 

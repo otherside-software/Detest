@@ -53,13 +53,14 @@
   <ItemGroup>
     <Compile Include="DetestPackage.cs" />
     <Compile Include="Extensions\VsSolutionHelper.cs" />
-    <Compile Include="EsprimaTestDiscoverer.cs" />
+    <Compile Include="JsTestDiscoverer.cs" />
     <Compile Include="JsTestExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestContainer.cs" />
     <Compile Include="TestContainerDiscoverer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="Key.snk" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">

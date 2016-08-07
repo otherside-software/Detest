@@ -1,8 +1,6 @@
 ﻿define([
-	"chai",
-	"can",
-	"app/shared/defines"
-], function (chai, can, defines) {
+	"chai"
+], function (chai) {
 
     var expect = chai.expect;
 
@@ -18,9 +16,16 @@
         });
 
         describe("multiplication", function () {
-            it("6*7 should equal 42", function () {
+            it("6*7 should equal 42", function (done) {
                 expect(42).to.equal(6 * 7);
+                setTimeout(function () {
+                    done();
+                }, 75);
             });
+
+            it("should fail this test", function () {
+                expect(1).to.equal(0);
+            })
         });
 
     });

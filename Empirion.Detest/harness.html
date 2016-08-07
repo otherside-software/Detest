@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Tests</title>
+    <meta charset="utf-8">
+
+    <link href="node_modules/mocha/mocha.css" rel="stylesheet" type="text/css" />
+
+    <script src="lib/require.js"></script>
+    <script src="require.config.js"></script>
+    <script>
+        require([
+            "mocha",
+            "mocha_runner"
+        ], function (localMocha, run) {
+            "use strict";
+            
+            mocha.setup("bdd"); //TODO:unhardcode
+            run(["TestAssets/mocha_bdd_math"]); //TODO:unhardcode
+        });
+    </script>
+</head>
+<body>
+    <div id="mocha"></div>
+</body>
+</html>

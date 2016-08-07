@@ -26,35 +26,22 @@ namespace Empirion.Detest
         [ImportingConstructor]
         public TestContainerDiscoverer([Import(typeof(SVsServiceProvider))]IServiceProvider serviceProvider)
         {
-            System.Diagnostics.Debug.WriteLine("constructor: " + ToString());
             this.serviceProvider = serviceProvider;
         }
 
         private IList<ITestContainer> GetTestContainers()
         {
             var solution = (IVsSolution)serviceProvider.GetService(typeof(SVsSolution));
+
+            //TODO: notimplemented exception fixen..
             var loadedProjects = solution.EnumerateLoadedProjects(__VSENUMPROJFLAGS.EPF_LOADEDINSOLUTION).OfType<IVsProject>();
+            
+            var containers = loadedProjects
+                .SelectMany(p => p.GetProjectItems())
+                .Where(IsTestFile)
+                .Select(p => new TestContainer(this, p));
 
-            try
-            {
-                var containers = loadedProjects
-                    .SelectMany(p => p.GetProjectItems())
-                    .Where(IsTestFile)
-                    .Select(p => new TestContainer(this, p));
-
-                var list = containers.ToList<ITestContainer>();
-                foreach (var l in list)
-                {
-                    System.Diagnostics.Debug.WriteLine(l.Source);
-                }
-                return list;
-            }
-            catch(Exception ex)
-            {
-                return new List<ITestContainer>();
-            }
-
-          
+            return containers.ToList<ITestContainer>();
         }
 
         private bool IsTestFile(string file)

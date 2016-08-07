@@ -14,7 +14,6 @@ namespace Empirion.Detest.Tests
         [TestMethod]
         public async Task PhantomStreaming()
         {
-            var path = Path.GetFullPath("phantomjs.exe");
             //ProcessRunner.RunProcess(path, "detest.js");
 
             var progress = new Progress<string>((data) => 
@@ -22,14 +21,9 @@ namespace Empirion.Detest.Tests
                 Debug.WriteLine(data);
             });
 
-            var foo = await ProcessRunner.RunProcessAsync(path, "detest.js", progress);
+            var foo = await ProcessRunner.RunProcessAsync("phantomjs.exe", "detest.js", progress);
             Debug.WriteLine(foo.Output.Count());
         }
 
-        [TestMethod]
-        public void TestGlobalInstalledNode()
-        {
-            
-        }
     }
 }
