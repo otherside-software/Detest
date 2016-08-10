@@ -5,8 +5,11 @@ var interop = require("./detest_interop");
 
 exports.analyze = function ( filename, suiteExpressionIdentifier, testExpressionIdentifier ) {
 
-    var ast = esprima.parse(fs.readFileSync(filename)),
-        stack = [];
+    var ast = esprima.parse(fs.readFileSync(filename), {
+        loc: true
+    });
+
+    var stack = [];
 
     function isNamedExpression(node, name) {
         return node.type === "ExpressionStatement"
@@ -23,7 +26,8 @@ exports.analyze = function ( filename, suiteExpressionIdentifier, testExpression
             if (isNamedExpression(node, testExpressionIdentifier)) {
                 interop.report({
                     suite: stack,
-                    test: node.expression.arguments[0].value
+                    test: node.expression.arguments[0].value,
+                    line: node.expression.loc.start.line
                 });
             }
         },

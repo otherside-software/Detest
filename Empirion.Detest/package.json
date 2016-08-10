@@ -4,13 +4,14 @@
   "description": "",
   "main": "analyzer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "http-server"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "esprima": "^2.7.2",
-    "estraverse": "^4.2.0"
+    "estraverse": "^4.2.0",
+    "http-server": "^0.9.0"
   },
   "devDependencies": {}
 }

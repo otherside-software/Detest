@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Tests</title>
+    <meta charset="utf-8">
+
+    <link href="node_modules/mocha/mocha.css" rel="stylesheet" type="text/css" />
+
+    $dependencies:{s|<script src="$s$"></script>};separator="\n"$
+
+    <script>
+        require([
+            "mocha"
+        ], function (localMocha) {
+            "use strict";
+            
+            //TODO: extract to separate file?
+            var detest = {
+                report: function (obj) {
+                    console.log(JSON.stringify(obj));
+                }
+            };
+
+            function getSuiteStack(node) {
+                var stack = [];
+                while(node.parent) {
+                    node = node.parent;
+
+                    if (node.title){
+                        stack.unshift( node.title );
+                    }
+                }
+
+                return stack;
+            }
+            
+            var reporter = function (runner) {
+                runner.on("pass", function (test) {
+
+                    
+                    detest.report({
+                        suite: getSuiteStack(test),
+                        test: test.title,
+                        passed: true,
+                        duration: test.duration
+                    });
+                });
+
+                runner.on("fail", function (test, err) {
+                    detest.report({
+                        suite: getSuiteStack(test),
+                        test: test.title,
+                        passed: false,
+                        duration: test.duration
+                    });
+                });
+
+                runner.on("end", function () {
+                    detest.report({
+                        close: true
+                    });
+                });
+            }
+
+            mocha.reporter(reporter);
+            mocha.setup("bdd"); //TODO:unhardcode
+
+            require([
+                $files:{f|"$f$"};separator=",\n"$
+            ], function () {
+                mocha.run();
+            });
+
+        });
+    </script>
+</head>
+<body>
+    <div id="mocha"></div>
+</body>
+</html>

@@ -11,7 +11,9 @@ namespace Empirion.Detest
         public IEnumerable<string> Output { get; private set; }
         public IEnumerable<string> Errors { get; private set; }
 
-        public ProcessResult(IEnumerable<string> output, IEnumerable<string> errors)
+        public int ExitCode { get; private set; }
+
+        public ProcessResult(int statusCode, IEnumerable<string> output, IEnumerable<string> errors)
         {
             Output = output;
             Errors = errors;

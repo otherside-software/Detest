@@ -24,7 +24,7 @@ namespace Empirion.Detest
 
             var tcs = new TaskCompletionSource<ProcessResult>();
             process.EnableRaisingEvents = true;
-            process.Exited += (sender, args) => tcs.TrySetResult(new ProcessResult(output, errors));
+            process.Exited += (sender, args) => tcs.TrySetResult(new ProcessResult(process.ExitCode, output, errors));
 
             return tcs.Task;
         }
@@ -42,7 +42,7 @@ namespace Empirion.Detest
 
             //TODO: error -> throw
 
-            return new ProcessResult(output, errors);
+            return new ProcessResult(process.ExitCode, output, errors);
         }
 
         public static ProcessResult RunAnalyzer(string analyzer, string fileToAnalyze)

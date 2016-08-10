@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Empirion.Detest.Tests
 {
@@ -12,18 +13,15 @@ namespace Empirion.Detest.Tests
     public class ExternalTools
     {
         [TestMethod]
-        public async Task PhantomStreaming()
+        public async Task PhantomStreaming2()
         {
-            //ProcessRunner.RunProcess(path, "detest.js");
-
-            var progress = new Progress<string>((data) => 
+            var progress = new Progress<string>((data) =>
             {
                 Debug.WriteLine(data);
             });
 
-            var foo = await ProcessRunner.RunProcessAsync("phantomjs.exe", "detest.js", progress);
+            var foo = await ProcessRunner.RunProcessAsync("phantomjs.exe", "detest_phantom.js", progress);
             Debug.WriteLine(foo.Output.Count());
         }
-
     }
 }

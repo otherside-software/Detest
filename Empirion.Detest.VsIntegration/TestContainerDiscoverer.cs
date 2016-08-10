@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TestWindow.Extensibility;
 using System;
@@ -31,22 +32,47 @@ namespace Empirion.Detest
 
         private IList<ITestContainer> GetTestContainers()
         {
-            var solution = (IVsSolution)serviceProvider.GetService(typeof(SVsSolution));
+            var envdte = serviceProvider.GetService(typeof(_DTE)) as _DTE;
 
-            //TODO: notimplemented exception fixen..
-            var loadedProjects = solution.EnumerateLoadedProjects(__VSENUMPROJFLAGS.EPF_LOADEDINSOLUTION).OfType<IVsProject>();
-            
-            var containers = loadedProjects
-                .SelectMany(p => p.GetProjectItems())
+            return GetAllProjectItemsInSolution(envdte)
                 .Where(IsTestFile)
-                .Select(p => new TestContainer(this, p));
-
-            return containers.ToList<ITestContainer>();
+                .Select(p => new TestContainer(this, p.FileNames[0]))
+                .ToList<ITestContainer>();
+            
+        }
+        
+        private bool IsTestFile(ProjectItem item)
+        {
+            if (item.FileCount > 0)
+            {
+                var file = item.FileNames[1];
+                return file.EndsWith(".js") && file.Contains("test");
+            }
+            return false;
         }
 
-        private bool IsTestFile(string file)
+        private IEnumerable<ProjectItem> GetAllProjectItemsInSolution(_DTE dte)
         {
-            return file.EndsWith(".js") && file.Contains("test");
+            foreach (Project project in dte.Solution.Projects)
+            {
+                foreach(var item in GetAllSubProjectItems(project.ProjectItems))
+                {
+                    yield return item;   
+                }
+            }
+        }
+
+        private IEnumerable<ProjectItem> GetAllSubProjectItems(ProjectItems items)
+        {
+            if (items == null)
+                yield break;
+
+            foreach (ProjectItem item in items)
+            {
+                yield return item;
+                foreach (var subItem in GetAllSubProjectItems(item.ProjectItems))
+                    yield return subItem;
+            }
         }
     }
 }

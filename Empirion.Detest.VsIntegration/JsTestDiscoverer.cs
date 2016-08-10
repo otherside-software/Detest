@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+﻿using Empirion.Detest.Interop;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using System.Collections.Generic;
@@ -18,7 +19,8 @@ namespace Empirion.Detest
 
         public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
         {
-            var tests = GetTests(sources);
+            var configuration = new Mocha.BddConfiguration(); //TODO: unhardcode
+            var tests = GetTests(configuration, sources);
 
             foreach (var test in tests)
             {
@@ -27,18 +29,27 @@ namespace Empirion.Detest
 
         }
 
-        public static IEnumerable<TestCase> GetTests(IEnumerable<string> sources)
+        public static IEnumerable<TestCase> GetTests(IFrameworkConfiguration configuration, IEnumerable<string> sources)
         {
-            //TODO: make this configurable
-            var analyzer = PathFinder.GetApplicationPath("mocha_bdd_analyzer.js");
+            var analyzer = PathFinder.GetApplicationPath(configuration.Analyzer);
 
-            var result2 = ProcessRunner.RunProcess("node", "-v");
-            foreach(var source in sources)
+            return GetTests(analyzer, sources).ToList();
+        }
+        
+        private static IEnumerable<TestCase> GetTests(string analyzer, IEnumerable<string> sources)
+        {
+            foreach (var source in sources)
             {
                 var result = ProcessRunner.RunAnalyzer(analyzer, source);
                 foreach (var line in result.Output)
                 {
-                    yield return new TestCase(line, JsTestExecutor.ExecutorUri, source);
+                    var testDescription = MessageParser.ParseTestMessage(line);
+                    yield return new TestCase(testDescription.FullyQualifiedName, JsTestExecutor.ExecutorUri, source)
+                    {
+                        CodeFilePath = source,
+                        DisplayName = testDescription.Test,
+                        LineNumber = testDescription.Line
+                    };
                 }
             }
         }
